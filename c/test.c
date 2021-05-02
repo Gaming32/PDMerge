@@ -4,7 +4,7 @@
 
 #include "pdmerge.h"
 #define SORT_TYPE PDMERGE_TYPE
-#define SORT_FUNC pdmerge2
+#define SORT_FUNC pdmerge3
 
 #define LENGTH 32
 #define SEED   time(NULL)

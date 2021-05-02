@@ -41,3 +41,4 @@ void pdmerge4(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc);
 
 // Internal utilities
 void pdmerge_merge(PDMERGE_TYPE* start, PDMERGE_TYPE* mid, PDMERGE_TYPE* end, PDMERGE_TYPE* copy, PDMergeCompare cmpfunc);
+size_t pdmerge2_findRuns(PDMERGE_TYPE* lastRun, PDMERGE_TYPE** runs, PDMERGE_TYPE* maxIndex, PDMergeCompare cmpfunc);

@@ -117,7 +117,7 @@ void pdmerge(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc) {
     PDMERGE_TYPE* arrayEnd = array + length;
     PDMERGE_TYPE** runs = malloc(sizeof(PDMERGE_TYPE*) * ((length + 3) / 2));
     PDMERGE_TYPE* copy = malloc(sizeof(PDMERGE_TYPE) * (length / 2));
-    PDMERGE_TYPE** runTop = pdmerge_findRuns(array, runs, array + length - 2, cmpfunc) + runs - 1;
+    PDMERGE_TYPE** runTop = pdmerge_findRuns(array, runs, array + length - 2, cmpfunc) + runs;
 
     while (runTop > runs + 1) {
         for (PDMERGE_TYPE** i = runs; i < runTop - 1; i += 2) {

@@ -29,71 +29,52 @@ SOFTWARE.
 
 #include "pdmerge.h"
 
-#define MIN_RUN_SIZE 16
+PDMERGE_TYPE* pdmerge3_monoboundLeft(PDMERGE_TYPE* start, PDMERGE_TYPE* end, PDMERGE_TYPE* value, PDMergeCompare cmpfunc) {
+    size_t top, mid;
+    top = end - start;
 
-void pdmerge2_insertSort(PDMERGE_TYPE* start, PDMERGE_TYPE* mid, PDMERGE_TYPE* end, PDMergeCompare cmpfunc) {
-    PDMERGE_TYPE *pos, *pos1, cur;
-    for (PDMERGE_TYPE* i = mid; i < end; i++) {
-        cur = *i;
-        pos = i - 1;
-        pos1 = i;
-        while (pos >= start && cmpfunc(pos, &cur) > 0)
-            *pos1-- = *pos--;
-        *pos1 = cur;
+    while (top > 1) {
+        mid = top / 2;
+
+        if (cmpfunc(value, end - mid) <= 0) {
+            end -= mid;
+        }
+        top -= mid;
     }
+
+    if (cmpfunc(value, end - 1) <= 0) {
+        return end - 1;
+    }
+    return end;
 }
 
-PDMERGE_TYPE* pdmerge2_identifyRun(PDMERGE_TYPE* index, PDMERGE_TYPE* maxIndex, PDMergeCompare cmpfunc) {
-    PDMERGE_TYPE* startIndex = index;
-    if (index > maxIndex) {
-        return NULL;
-    }
+PDMERGE_TYPE* pdmerge3_monoboundRight(PDMERGE_TYPE* start, PDMERGE_TYPE* end, PDMERGE_TYPE* value, PDMergeCompare cmpfunc) {
+    size_t top, mid;
+    top = end - start;
 
-    bool cmp = cmpfunc(index, index + 1) <= 0;
-    index++;
+    while (top > 1) {
+        mid = top / 2;
 
-    while (index < maxIndex) {
-        bool checkCmp = cmpfunc(index, index + 1) <= 0;
-        if (checkCmp != cmp) {
-            break;
+        if (cmpfunc(start + mid, value) <= 0) {
+            start += mid;
         }
-        index++;
+        top -= mid;
     }
 
-    if (!cmp) {
-        PDMERGE_TYPE *i = startIndex, *j = index;
-        while (i < j) {
-            PDMERGE_TYPE tmp = *i;
-            *i++ = *j;
-            *j-- = tmp;
-        }
+    if (cmpfunc(start, value) <= 0) {
+        return start + 1;
     }
-
-    if (index - startIndex + 1 < MIN_RUN_SIZE) {
-        PDMERGE_TYPE* end = startIndex + MIN_RUN_SIZE;
-        if (end > maxIndex + 2) {
-            end = maxIndex + 2;
-        }
-        pdmerge2_insertSort(startIndex, index + 1, end, cmpfunc);
-        return end > maxIndex ? NULL : end;
-    }
-
-    if (index > maxIndex) {
-        return NULL;
-    }
-    return index + 1;
+    return start;
 }
 
-size_t pdmerge2_findRuns(PDMERGE_TYPE* lastRun, PDMERGE_TYPE** runs, PDMERGE_TYPE* maxIndex, PDMergeCompare cmpfunc) {
-    size_t runCount = 0;
-    while (lastRun != NULL) {
-        runs[runCount++] = lastRun;
-        lastRun = pdmerge2_identifyRun(lastRun, maxIndex, cmpfunc);
-    }
-    return runCount;
+void pdmerge3_merge(PDMERGE_TYPE* start, PDMERGE_TYPE* mid, PDMERGE_TYPE* end, PDMERGE_TYPE* copy, PDMergeCompare cmpfunc) {
+    start = pdmerge3_monoboundRight(start, mid, mid, cmpfunc);
+    if (start == mid) return;
+    end = pdmerge3_monoboundLeft(mid, end, mid - 1, cmpfunc);
+    pdmerge_merge(start, mid, end, copy, cmpfunc);
 }
 
-void pdmerge2(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc) {
+void pdmerge3(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc) {
     PDMERGE_TYPE* arrayEnd = array + length;
     PDMERGE_TYPE** runs = malloc(sizeof(PDMERGE_TYPE*) * ((length + 31) / 16));
     PDMERGE_TYPE* copy = malloc(sizeof(PDMERGE_TYPE) * (length / 2));
@@ -102,7 +83,7 @@ void pdmerge2(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc) {
     while (runTop > runs + 1) {
         for (PDMERGE_TYPE** i = runs; i < runTop - 1; i += 2) {
             PDMERGE_TYPE* end = i + 3 > runTop ? arrayEnd : i[2];
-            pdmerge_merge(*i, i[1], end, copy, cmpfunc);
+            pdmerge3_merge(*i, i[1], end, copy, cmpfunc);
         }
         for (PDMERGE_TYPE **i = runs + 1, **j = runs + 2; i < runTop; i++, j += 2, runTop--) {
             *i = *j;
