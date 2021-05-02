@@ -1,1 +1,3 @@
 .vscode
+c/build.bat
+*.exe
