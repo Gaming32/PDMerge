@@ -33,11 +33,11 @@ typedef int (*PDMergeCompare)(const PDMERGE_TYPE* a, const PDMERGE_TYPE* b);
 
 
 // Sorting functions
-void pdmerge(PDMERGE_TYPE* array, size_t nmemb, PDMergeCompare CMP);
-void pdmerge2(PDMERGE_TYPE* array, size_t nmemb, PDMergeCompare CMP);
-void pdmerge3(PDMERGE_TYPE* array, size_t nmemb, PDMergeCompare CMP);
-void pdmerge4(PDMERGE_TYPE* array, size_t nmemb, PDMergeCompare CMP);
+void pdmerge(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc);
+void pdmerge2(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc);
+void pdmerge3(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc);
+void pdmerge4(PDMERGE_TYPE* array, size_t length, PDMergeCompare cmpfunc);
 
 
 // Internal utilities
-
+void pdmerge_merge(PDMERGE_TYPE* start, PDMERGE_TYPE* mid, PDMERGE_TYPE* end, PDMERGE_TYPE* copy, PDMergeCompare cmpfunc);
