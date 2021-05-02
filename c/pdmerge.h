@@ -40,11 +40,4 @@ void pdmerge4(PDMERGE_TYPE* array, size_t nmemb, PDMergeCompare CMP);
 
 
 // Internal utilities
-#define PDMERGE_REVERSE(i, j) \
-    while (i < j) { \
-        PDMERGE_TYPE tmp = *i; \
-        *i = *j; \
-        *j = tmp; \
-    }
-// size_t pdmerge_findRuns(PDMERGE_TYPE* array, size_t* runs, size_t maxIndex);
-// size_t pdmerge_identifyRun(PDMERGE_TYPE* array, size_t lastRun, size_t maxIndex);
+
